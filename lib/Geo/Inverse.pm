@@ -25,10 +25,10 @@ This module is a pure Perl port of the NGS program in the public domain "inverse
 
 use strict;
 use vars qw($VERSION);
-use constant PI => 2 * atan2(1, 0);
-use constant RAD => 180/PI;
+use Geo::Constants qw{PI};
+use Geo::Functions qw{rad_deg deg_rad};
 
-$VERSION = sprintf("%d.%02d", q{Revision: 0.01} =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q{Revision: 0.02} =~ /(\d+)\.(\d+)/);
 
 =head1 CONSTRUCTOR
 
@@ -37,7 +37,7 @@ $VERSION = sprintf("%d.%02d", q{Revision: 0.01} =~ /(\d+)\.(\d+)/);
 The new() constructor may be called with any parameter that is appropriate to the Geo::Ellipsoids->new() constructor which established the ellipsoid.
 
   my $obj = Geo::Inverse->new(); # default "WGS84"
-    
+
 =cut
 
 sub new {
@@ -103,8 +103,9 @@ sub inverse {
   my $lon1=shift();      #degrees
   my $lat2=shift();      #degrees
   my $lon2=shift();      #degrees
-  my ($faz,$baz,$dist)=$self->_inverse($lat1/RAD,$lon1/RAD,$lat2/RAD,$lon2/RAD);
-  return($faz*RAD, $baz*RAD, $dist);
+  my ($faz, $baz, $dist)=$self->_inverse(rad_deg($lat1), rad_deg($lon1),
+                                         rad_deg($lat2), rad_deg($lon2));
+  return(deg_rad($faz), deg_rad($baz), $dist);
 }
 
 ########################################################################
@@ -125,11 +126,13 @@ sub inverse {
 #
 #	Return the results as the list (range,bearing) with range in meters
 #	and bearing in radians.
+#
+########################################################################
 
 sub _inverse {
   my $self = shift;
   my( $lat1, $lon1, $lat2, $lon2 ) = (@_);
-  
+
   my $ellipsoid=$self->ellipsoid;
   my $a = $ellipsoid->a;
   my $f = $ellipsoid->f;
@@ -138,7 +141,7 @@ sub _inverse {
   my $max_loop_count = 20;
   my $pi=PI;
   my $twopi = 2 * $pi;
-  
+
   my $r = 1.0 - $f;
   my $tu1 = $r * sin($lat1) / cos($lat1);
   my $tu2 = $r * sin($lat2) / cos($lat2);
@@ -149,7 +152,7 @@ sub _inverse {
   my $baz = $s * $tu2;
   my $faz = $baz * $tu1;
   my $dlon = $lon2 - $lon1;
-  
+
   my $x = $dlon;
   my $cnt = 0;
   my( $c2a, $c, $cx, $cy, $cz, $d, $del, $e, $sx, $sy, $y );
@@ -167,7 +170,7 @@ sub _inverse {
     }else{
       $sa = ($s*$sx) / $sy;
     }
-  
+
     $c2a = 1.0 - ($sa*$sa);
     $cz = $faz + $faz;
     if( $c2a > 0.0 ) {
@@ -179,9 +182,9 @@ sub _inverse {
     $x = ( ($e * $cy * $c + $cz) * $sy * $c + $y) * $sa;
     $x = ( 1.0 - $c ) * $x * $f + $dlon;
     $del = $d - $x;
-  
+ 
   } while( (abs($del) > $eps) && ( ++$cnt <= $max_loop_count ) );
-  
+
   $faz = atan2($tu1,$tu2);
   $baz = atan2($cu1*$sx,($baz*$cx - $su1*$cu2)) + $pi;
   $x = sqrt( ((1.0/($r*$r)) -1.0 ) * $c2a+1.0 ) + 1.0;
@@ -190,11 +193,11 @@ sub _inverse {
   $c = (($x*$x)/4.0 + 1.0)/$c;
   $d = ((0.375*$x*$x) - 1.0)*$x;
   $x = $e*$cy;
-  
+
   $s = 1.0 - $e - $e;
   $s = (((((((( $sy * $sy * 4.0 ) - 3.0) * $s * $cz * $d/6.0) - $x) * 
     $d /4.0) + $cz) * $sy * $d) + $y ) * $c * $a * $r;
-  
+
   # adjust azimuth to (0,360)
   $faz += $twopi if $faz < 0;
 
@@ -221,12 +224,13 @@ Michael R. Davis qw/perl michaelrdavis com/
 
 =head1 LICENSE
 
+Copyright (c) 2006 Michael R. Davis (mrdvt92)
+
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
 Net::GPSD
-Geo::Spline
 Geo::Ellipsoid
-Geo::Ellipsoids
+GIS::Distance::GeoEllipsoid
