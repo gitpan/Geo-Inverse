@@ -28,7 +28,7 @@ use vars qw($VERSION);
 use Geo::Constants qw{PI};
 use Geo::Functions qw{rad_deg deg_rad};
 
-$VERSION = sprintf("%d.%02d", q{Revision: 0.02} =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q{Revision: 0.03} =~ /(\d+)\.(\d+)/);
 
 =head1 CONSTRUCTOR
 
@@ -55,37 +55,29 @@ sub new {
 
 sub initialize {
   my $self = shift();
-  my $param = shift();
-  $self->set($param);
-}
-
-=head2 set
-
-Method sets the current ellipsoid.  This method is called when the object is constructed (default is WGS84).
-
-  $obj->set(); #default WGS84
-  $obj->set('Clarke 1866'); #Built in ellipsoids from Geo::Ellipsoids
-  $obj->set({a=>1});  #Custom Sphere 1 unit radius
-
-=cut
-
-sub set {
-  my $self = shift();
-  my $param = shift();
-  use Geo::Ellipsoids;
-  my $obj=Geo::Ellipsoids->new($param);
-  $self->ellipsoid($obj);
+  my $param = shift()||undef();
+  $self->ellipsoid($param);
 }
 
 =head2 ellipsoid
 
-Method to set or retrieve the current ellipsoid object the ellipsoid oject does not have to be Geo::Ellipsoids but it must be blessed and know $obj->a and $obj->f methods.
+Method to set or retrieve the current ellipsoid object.  The ellipsoid object is a Geo::Ellipsoids object.
+
+  my $ellipsoid=$obj->ellipsoid;  #Default is WGS84
+
+  $obj->ellipsoid('Clarke 1866'); #Built in ellipsoids from Geo::Ellipsoids
+  $obj->ellipsoid({a=>1});        #Custom Sphere 1 unit radius
 
 =cut
 
 sub ellipsoid {
   my $self = shift();
-  if (@_) { $self->{'ellipsoid'} = shift() }; #sets value
+  if (@_) {
+    my $param=shift();
+    use Geo::Ellipsoids;
+    my $obj=Geo::Ellipsoids->new($param);
+    $self->{'ellipsoid'}=$obj;
+  }
   return $self->{'ellipsoid'};
 }
 

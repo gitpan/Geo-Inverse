@@ -1,2 +1,7 @@
+2006-12-08 v0.03
+  * Merged set and ellipsoid methods
+  * Update build requirment versions
+2006-12-03 v0.02
+  * Imported Geo::Constants Geo::Functions
 2006-10-30 v0.01
   * Original version

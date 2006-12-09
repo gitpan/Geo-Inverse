@@ -5,9 +5,9 @@ WriteMakefile(
   PREREQ_PM => {
                  strict          => 0,
                  vars            => 0,
-                 Geo::Constants  => 0.02,
-                 Geo::Functions  => 0.02,
-                 Geo::Ellipsoids => 0,
+                 Geo::Constants  => 0.04,
+                 Geo::Functions  => 0.03,
+                 Geo::Ellipsoids => 0.09,
                },
                ($] >= 5.005 ? 
                  (
