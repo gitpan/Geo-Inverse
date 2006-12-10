@@ -28,13 +28,13 @@ use vars qw($VERSION);
 use Geo::Constants qw{PI};
 use Geo::Functions qw{rad_deg deg_rad};
 
-$VERSION = sprintf("%d.%02d", q{Revision: 0.03} =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q{Revision: 0.04} =~ /(\d+)\.(\d+)/);
 
 =head1 CONSTRUCTOR
 
 =head2 new
 
-The new() constructor may be called with any parameter that is appropriate to the Geo::Ellipsoids->new() constructor which established the ellipsoid.
+The new() constructor may be called with any parameter that is appropriate to the ellipsoid method which establishes the ellipsoid.
 
   my $obj = Geo::Inverse->new(); # default "WGS84"
 
@@ -61,7 +61,7 @@ sub initialize {
 
 =head2 ellipsoid
 
-Method to set or retrieve the current ellipsoid object.  The ellipsoid object is a Geo::Ellipsoids object.
+Method to set or retrieve the current ellipsoid object.  The ellipsoid is a Geo::Ellipsoids object.
 
   my $ellipsoid=$obj->ellipsoid;  #Default is WGS84
 
@@ -205,6 +205,8 @@ __END__
 Add more tests.
 
 =head1 BUGS
+
+Please send to the geo-perl email list.
 
 =head1 LIMITS
 
