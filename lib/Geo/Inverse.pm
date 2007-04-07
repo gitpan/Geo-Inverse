@@ -9,7 +9,8 @@ Geo::Inverse - Calculate geographic distance from a lat & lon pair.
   use Geo::Inverse;
   my $obj = Geo::Inverse->new(); # default "WGS84"
   my ($lat1,$lon1,$lat2,$lon2)=(38.87, -77.05, 38.95, -77.23);
-  my ($faz, $baz, $dist)=$obj->inverse($lat1,$lon1,$lat2,$lon2);
+  my ($faz, $baz, $dist)=$obj->inverse($lat1,$lon1,$lat2,$lon2); #array context
+  my $dist=$obj->inverse($lat1,$lon1,$lat2,$lon2);              #scalar context
   print "Input Lat: $lat1  Lon: $lon1\n";
   print "Input Lat: $lat2 Lon: $lon2\n";
   print "Output Distance: $dist\n";
@@ -28,7 +29,7 @@ use vars qw($VERSION);
 use Geo::Constants qw{PI};
 use Geo::Functions qw{rad_deg deg_rad};
 
-$VERSION = sprintf("%d.%02d", q{Revision: 0.04} =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q{Revision: 0.05} =~ /(\d+)\.(\d+)/);
 
 =head1 CONSTRUCTOR
 
@@ -97,7 +98,7 @@ sub inverse {
   my $lon2=shift();      #degrees
   my ($faz, $baz, $dist)=$self->_inverse(rad_deg($lat1), rad_deg($lon1),
                                          rad_deg($lat2), rad_deg($lon2));
-  return(deg_rad($faz), deg_rad($baz), $dist);
+  return wantarray ? (deg_rad($faz), deg_rad($baz), $dist) : $dist;
 }
 
 ########################################################################

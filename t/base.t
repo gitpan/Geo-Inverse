@@ -43,7 +43,7 @@ sub d {
   return($d + ($m + $s/60)/60);
 }
 
-BEGIN { plan tests => 11 }
+BEGIN { plan tests => 12 }
 
 # just check that all modules can be compiled
 ok(eval {require Geo::Inverse; 1}, 1, $@);
@@ -66,4 +66,10 @@ ok near($dist, 42350.9312);
                d(qw{67 45 32.65433}),-1*d(qw{118 34 43.23454}));
 ok near($faz, d(qw{338 56  3.2089}));
 ok near($baz, d(qw{158 46  2.8840}));
+ok near($dist, 21193.2643);
+
+#New in Geo::Inverse->VERISON >= 0.05
+$dist = 
+   $o->inverse(d(qw{67 34 54.65443}),-1*d(qw{118 23 54.24523}),
+               d(qw{67 45 32.65433}),-1*d(qw{118 34 43.23454}));
 ok near($dist, 21193.2643);
